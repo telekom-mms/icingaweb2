@@ -66,3 +66,9 @@ CREATE TABLE icingaweb_schema (
 
 INSERT INTO icingaweb_schema (version, timestamp, success)
   VALUES ('2.12.0', UNIX_TIMESTAMP() * 1000, 'y');
+
+CREATE TABLE `icingaweb_settings`(
+  `filename` varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `data`  TEXT COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`filename`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
