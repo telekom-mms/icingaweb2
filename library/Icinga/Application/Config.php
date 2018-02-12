@@ -3,6 +3,8 @@
 
 namespace Icinga\Application;
 
+use Icinga\File\Ini\IniParserDb;
+use Icinga\File\Ini\IniWriterDb;
 use Iterator;
 use Countable;
 use LogicException;
@@ -63,6 +65,16 @@ class Config implements Countable, Iterator, Selectable
      * @var string
      */
     protected $configFile;
+
+    /**
+     * These INI files are always on the hard disk
+     *
+     * @var array
+     */
+    const DB_SETTING_FILES = array(
+        '/modules/grafana/graphs.ini',
+        '/roles.ini',
+    );
 
     /**
      * Create a new config
@@ -320,6 +332,15 @@ class Config implements Countable, Iterator, Selectable
         $emptyConfig = new static();
 
         $filepath = realpath($file);
+
+        if (self::is_db_file($filepath)) {
+            $config = Config::app()->getSection('global');
+            $settings_backend = $config->get('settings_backend');
+            if ($settings_backend == 'db') {
+                return IniParserDb::parseIniFile($filepath);
+            }
+        }
+
         if ($filepath === false) {
             $emptyConfig->setConfigFile($file);
         } elseif (is_readable($filepath)) {
@@ -329,6 +350,19 @@ class Config implements Countable, Iterator, Selectable
         }
 
         return $emptyConfig;
+    }
+
+    /**
+     * @param string $filepath
+     * @return bool
+     */
+    protected static function is_db_file($filepath) {
+        foreach (self::DB_SETTING_FILES as $filename) {
+            if (strpos($filepath, $filename) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -367,6 +401,12 @@ class Config implements Countable, Iterator, Selectable
      */
     protected function getIniWriter($filePath = null, $fileMode = null)
     {
+        $config = Config::app()->getSection('global');
+        $backend = $config->get('settings_backend');
+        if ($backend == 'db' and self::is_db_file($filePath)) {
+            return new IniWriterDb($this, $filePath, $fileMode);
+        }
+
         return new IniWriter($this, $filePath, $fileMode);
     }
 
