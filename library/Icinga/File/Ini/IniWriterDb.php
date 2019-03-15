@@ -49,7 +49,7 @@ class IniWriterDb extends IniWriter
     {
         try {
             $db = $db_connection->getDbAdapter();
-            $data = array(IniParserDb::COLUMN_DATA => $this->render());
+            $data = array(IniParserDb::COLUMN_DATA => $this->render(), IniParserDb::COLUMN_FILENAME => $filename);
             $db->insert(IniParserDb::TABLE, $data);
         } catch (Exception $e) {
             throw new NotReadableError(
