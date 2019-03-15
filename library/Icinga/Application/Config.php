@@ -74,6 +74,7 @@ class Config implements Countable, Iterator, Selectable
     const DB_SETTING_FILES = array(
         '/modules/grafana/graphs.ini',
         '/roles.ini',
+        '/menu.ini',
     );
 
     /**
