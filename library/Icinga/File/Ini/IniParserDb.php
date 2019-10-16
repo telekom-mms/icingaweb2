@@ -29,10 +29,6 @@ class IniParserDb extends IniParser
      */
     public static function parseIniFile($file)
     {
-        if (($path = realpath($file)) === false) {
-            throw new NotReadableError('Couldn\'t compute the absolute path of `%s\'', $file);
-        }
-
         $config = Config::app()->getSection('global');
         $ressource = $config->get('settings_resource');
         if ($ressource === null) {
@@ -44,13 +40,13 @@ class IniParserDb extends IniParser
             $db = $db_connection->getDbAdapter();
             $result = $db->select()
                 ->from(self::TABLE, array(self::COLUMN_DATA))
-                ->where(self::COLUMN_FILENAME . ' = ?', $path)
+                ->where(self::COLUMN_FILENAME . ' = ?', $file)
                 ->query()
                 ->fetchAll();
         } catch (Exception $e) {
             throw new NotReadableError(
                 'Cannot fetch settings %s from database',
-                $path,
+                $file,
                 $e
             );
         }
@@ -62,13 +58,13 @@ class IniParserDb extends IniParser
                 $content = $row->{self::COLUMN_DATA};
             }
         } else {
-            throw new ConfigurationError("found ".count($result)." settings for $path in database");
+            throw new ConfigurationError("found ".count($result)." settings for $file in database");
         }
 
         try {
             $configArray = parse_ini_string($content, true);
         } catch (ErrorException $e) {
-            throw new ConfigurationError('Couldn\'t parse the INI file `%s\'', $path, $e);
+            throw new ConfigurationError('Couldn\'t parse the INI file `%s\'', $file, $e);
         }
 
         return Config::fromArray($configArray)->setConfigFile($file);
