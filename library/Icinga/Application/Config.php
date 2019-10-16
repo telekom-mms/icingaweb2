@@ -334,11 +334,11 @@ class Config implements Countable, Iterator, Selectable
 
         $filepath = realpath($file);
 
-        if (self::is_db_file($filepath)) {
+        if (self::is_db_file($file)) {
             $config = Config::app()->getSection('global');
             $settings_backend = $config->get('settings_backend');
             if ($settings_backend == 'db') {
-                return IniParserDb::parseIniFile($filepath);
+                return IniParserDb::parseIniFile($file);
             }
         }
 
