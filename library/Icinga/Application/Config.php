@@ -76,7 +76,9 @@ class Config implements Countable, Iterator, Selectable
         '/modules/x509/jobs.ini',
         '/modules/x509/sni.ini',
         '/roles.ini',
-        '/menu.ini',
+        '/navigation/menu.ini',
+        '/navigation/host-actions.ini',
+        '/navigation/service-actions.ini',
     );
 
     /**
