@@ -71,4 +71,4 @@ CREATE TABLE `icingaweb_settings`(
   `filename` varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
   `data`  TEXT COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`filename`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
